@@ -84,6 +84,8 @@ static NSString const *AI_API = @"https://api.ai.qq.com/fcgi-bin/nlp/nlp_textcha
      success:(void (^) (id responsobject))success
      failure:(void (^) (NSError *error , NSString *failureMsg))failure {
     
+    NSLog(@"%@",parame);
+    
     [self.manager POST:url parameters:parame progress:^(NSProgress *uploadProgress) {
         
     } success:^(NSURLSessionDataTask *task, id   _Nullable responseObject) {
