@@ -49,8 +49,8 @@
         NSLog(@"del http success.%@",ret);
         
         if([ret[@"err"] isEqualToNumber:@(0)]){
-            NSLog(@"send ok!!!!will try 2 second later.");
-            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            NSLog(@"send ok!!!!will try 5 second later.");
+            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
                 [wself autoSendMsg];
             });
         }else{
