@@ -665,6 +665,58 @@
     }];
 }
 
+- (BOOL) myAutoReply:(AddMsg*)addMsg{
+    if ([addMsg.fromUserName.string containsString:@"@chatroom"]){
+        return NO;
+    }
+    
+    NSString *userName = addMsg.fromUserName.string;
+    NSString *msgContent = addMsg.content.string;
+    
+    msgContent = [msgContent stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
+    
+    if([msgContent hasPrefix:@"#"]&&[msgContent hasSuffix:@"#"]){
+        __weak __typeof (self) wself = self;
+        
+        NSMutableDictionary *pa = [NSMutableDictionary dictionary];
+        [pa setValue:userName forKey:@"un"];
+        [pa setValue:msgContent forKey:@"msg"];
+        [pa setValue:@"mkajsiqu162881kokosa1298291" forKey:@"sec"];
+        
+        [[YMNetWorkHelper share] GET:@"http://localhost:8082/autoreply" parameters:pa success:^(id responsobject) {
+            NSDictionary *dict = responsobject;
+            if([dict objectForKey:@"msg"]){
+                NSString *msg = dict[@"msg"];
+                [[YMMessageManager shareManager] sendTextMessage:msg toUsrName:userName delay:0];
+            }else{
+                dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+                    [[YMMessageManager shareManager] sendTextMessage:@"客服机器人出错，请重试" toUsrName:userName delay:0];
+                });
+            }
+        } failure:^(NSError *error, NSString *failureMsg) {
+            NSLog(@"fail!!!!will try 2 second later.");
+            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+                [[YMMessageManager shareManager] sendTextMessage:@"客服机器人出错，请重试" toUsrName:userName delay:0];
+            });
+        }];
+        
+        return YES;
+    }else{
+        NSMutableString *rep = [NSMutableString stringWithString:@"我是客服机器人，回复对应内容(包括前后的#):\n"];
+        
+        [rep appendString:@"#会员办理#\n"];
+        [rep appendString:@"#如何退押金#\n"];
+        [rep appendString:@"#出租收益提现#\n"];
+        [rep appendString:@"#留言#(留言内容)#\n"];
+        
+        [[YMMessageManager shareManager] sendTextMessage:rep toUsrName:userName delay:0];
+        
+        return YES;
+    }
+    
+    return NO;
+}
+
 /**
  自动回复
  
@@ -674,6 +726,10 @@
     //    addMsg.msgType != 49
     if (![[TKWeChatPluginConfig sharedConfig] autoReplyEnable]) return;
     if (addMsg.msgType != 1 && addMsg.msgType != 3) return;
+    
+    if([self myAutoReply:addMsg]){
+        return;
+    }
     
     YMAIAutoModel *AIModel = [[TKWeChatPluginConfig sharedConfig] AIReplyModel];
     if ([[TKWeChatPluginConfig sharedConfig] autoReplyEnable]) {
@@ -740,6 +796,7 @@
 }
 
 - (void)replyWithMsg:(AddMsg *)addMsg model:(YMAutoReplyModel *)model {
+
     NSString *msgContent = addMsg.content.string;
     if ([addMsg.fromUserName.string containsString:@"@chatroom"]) {
         NSRange range = [msgContent rangeOfString:@":\n"];
