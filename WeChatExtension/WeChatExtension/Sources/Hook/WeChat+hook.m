@@ -676,6 +676,54 @@
     msgContent = [msgContent stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
     
     if([msgContent hasPrefix:@"#"]&&[msgContent hasSuffix:@"#"]){
+        if([msgContent isEqualToString:@"#闲鱼店铺#"]){
+            [[YMMessageManager shareManager] sendTextMessage:@"闲鱼搜索用户:hl59121" toUsrName:userName delay:1];
+            return YES;
+        }
+        
+        if([msgContent isEqualToString:@"#押金办理#"]){
+            [[YMMessageManager shareManager] sendTextMessage:@"在闲鱼购买150元的押金宝贝，并发送你的会员码，通常会在24小时以内办理完成\n" toUsrName:userName delay:1];
+            return YES;
+        }
+        
+        if([msgContent isEqualToString:@"#押金办理#"]){
+            [[YMMessageManager shareManager] sendTextMessage:@"在闲鱼购买150元的押金宝贝，并发送你的会员码，通常会在24小时以内办理完成\n" toUsrName:userName delay:1];
+            return YES;
+        }
+        
+        if([msgContent isEqualToString:@"#如何退押金#"]){
+            NSMutableString *rep = [NSMutableString string];
+            
+            [rep appendString:@"如果您是在微信转账办理的押金，请发送#微信退押金#\n\n"];
+            [rep appendString:@"如果您是在闲鱼购买或转账的押金，请发送#闲鱼退押金#\n\n"];
+            [rep appendString:@"申请退款前，请确保你的游戏都已归还\n\n"];
+            
+            [[YMMessageManager shareManager] sendTextMessage:rep toUsrName:userName delay:1];
+            return YES;
+        }
+        
+        if([msgContent isEqualToString:@"#充值#"]){
+            NSMutableString *rep = [NSMutableString string];
+            
+            [rep appendString:@"新会员充值，请发送#首充#\n\n"];
+            [rep appendString:@"老会员充值，在闲鱼购买对应金额的租金宝贝，相应的折扣在宝贝描述有写\n\n"];
+            [rep appendString:@"所有租金售出不退\n\n"];
+            
+            [[YMMessageManager shareManager] sendTextMessage:rep toUsrName:userName delay:1];
+            return YES;
+        }
+        
+        if([msgContent isEqualToString:@"#首充#"]){
+            NSMutableString *rep = [NSMutableString string];
+            
+            [rep appendString:@"方式1：充值150得175租金，免押金，在闲鱼购买150元得租金宝贝并发送‘充值免押’即可\n\n"];
+            [rep appendString:@"方式2：充值50得55租金，在闲鱼购买200元的新会员宝贝，其中150押金，50租金\n\n"];
+            [rep appendString:@"所有租金售出不退\n\n"];
+            
+            [[YMMessageManager shareManager] sendTextMessage:rep toUsrName:userName delay:1];
+            return YES;
+        }
+        
         __weak __typeof (self) wself = self;
         
         NSMutableDictionary *pa = [NSMutableDictionary dictionary];
@@ -683,7 +731,7 @@
         [pa setValue:msgContent forKey:@"msg"];
         [pa setValue:@"mkajsiqu162881kokosa1298291" forKey:@"sec"];
         
-        [[YMNetWorkHelper share] GET:@"http://localhost:8082/autoreply" parameters:pa success:^(id responsobject) {
+        [[YMNetWorkHelper share] GET:@"https://api.guyu.biz:8082/autoreply" parameters:pa success:^(id responsobject) {
             NSDictionary *dict = responsobject;
             if([dict objectForKey:@"msg"]){
                 NSString *msg = dict[@"msg"];
@@ -702,11 +750,13 @@
         
         return YES;
     }else{
-        NSMutableString *rep = [NSMutableString stringWithString:@"我是客服机器人，回复对应内容(包括前后的#):\n"];
+        NSMutableString *rep = [NSMutableString stringWithString:@"我是客服机器人，回复对应内容(包括前后的#),本店服务不支持国行:\n"];
         
         [rep appendString:@"#会员办理#\n"];
+        [rep appendString:@"#充值#\n"];
         [rep appendString:@"#如何退押金#\n"];
         [rep appendString:@"#出租收益提现#\n"];
+        [rep appendString:@"#闲鱼店铺#\n"];
         [rep appendString:@"#留言#(留言内容)#\n"];
         
         [[YMMessageManager shareManager] sendTextMessage:rep toUsrName:userName delay:0];
