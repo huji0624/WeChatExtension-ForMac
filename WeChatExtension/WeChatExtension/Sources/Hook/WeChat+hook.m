@@ -686,11 +686,6 @@
             return YES;
         }
         
-        if([msgContent isEqualToString:@"#押金办理#"]){
-            [[YMMessageManager shareManager] sendTextMessage:@"在闲鱼购买150元的押金宝贝，并发送你的会员码，通常会在24小时以内办理完成\n" toUsrName:userName delay:1];
-            return YES;
-        }
-        
         if([msgContent isEqualToString:@"#如何退押金#"]){
             NSMutableString *rep = [NSMutableString string];
             
@@ -754,6 +749,7 @@
         
         [rep appendString:@"#会员办理#\n"];
         [rep appendString:@"#充值#\n"];
+        [rep appendString:@"#押金办理#\n"];
         [rep appendString:@"#如何退押金#\n"];
         [rep appendString:@"#出租收益提现#\n"];
         [rep appendString:@"#闲鱼店铺#\n"];
